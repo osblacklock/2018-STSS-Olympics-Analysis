@@ -1,6 +1,9 @@
 import sqlite3
 from sqlite3 import OperationalError
 
+import plotly as py
+import plotly.graph_objs as go
+
 conn = sqlite3.connect(":memory:")
 c = conn.cursor()
 
@@ -16,17 +19,28 @@ for cmd in cv:
         print("Command skipped: ", msg)
 
 
-result = c.execute('''SELECT athlete_name, times FROM results, athletes
-                      WHERE athletes.athlete_id = results.athlete_id
-                        AND heat = 1
-                        AND event_id = 3
-                        AND round_id = 4
-                        AND times !=
-                        (SELECT max(times) FROM results, athletes
-                        WHERE athletes.athlete_id = results.athlete_id AND heat = 1 AND event_id = 3 AND round_id = 4)
-                        ORDER BY times ASC''')
-countries = result.fetchall() 
-print(countries)
+result = c.execute('''SELECT athlete_weight_kg, athlete_height_cm FROM athletes
+                    WHERE athlete_gender = 'F'
+''')
+query = result.fetchall() 
+print(query)
+
+xs = []
+ys = []
+for points in query:
+    xs.append(points[0])
+    ys.append(points[1])
+print(xs)
+
+trace = go.Scatter(
+    x = xs,
+    y = ys,
+    mode = 'markers'
+    )
+
+data = [trace]
+
+py.offline.plot(data, filename='basic-scatter')
 
 c.close()
 conn.close()
