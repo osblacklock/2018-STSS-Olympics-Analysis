@@ -40,7 +40,7 @@ trace = go.Scatter(
 
 data = [trace]
 
-py.offline.plot(data, filename='basic-scatter')
+py.offline.plot(data, filename='basic-scatter.html')
 
 c.close()
 conn.close()
